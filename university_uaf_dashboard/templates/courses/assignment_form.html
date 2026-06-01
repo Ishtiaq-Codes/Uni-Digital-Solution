@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Create Assignment - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">Create Assignment</h1><p class="page-subtitle">For: {{ course.title }}</p></div>
+<div class="card max-w-2xl">
+    <form method="post" enctype="multipart/form-data" class="space-y-4">{% csrf_token %}
+        {% for field in form %}<div class="form-group"><label class="form-label">{{ field.label }}</label>{{ field }}{% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}</div>{% endfor %}
+        <button type="submit" class="btn-primary">Create Assignment</button>
+    </form>
+</div>
+{% endblock %}

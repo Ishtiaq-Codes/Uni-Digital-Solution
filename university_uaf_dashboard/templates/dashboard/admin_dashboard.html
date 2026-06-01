@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - UAF{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Welcome back, {{ user.get_full_name }}.</p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="stat-card">
+        <div class="stat-icon bg-gradient-to-br from-indigo-500 to-indigo-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </div>
+        <div>
+            <p class="text-2xl font-bold text-slate-900">{{ total_students|default:"0" }}</p>
+            <p class="text-sm text-slate-500">Total Students</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-gradient-to-br from-emerald-500 to-emerald-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg>
+        </div>
+        <div>
+            <p class="text-2xl font-bold text-slate-900">{{ total_departments|default:"0" }}</p>
+            <p class="text-sm text-slate-500">Departments</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-gradient-to-br from-amber-500 to-amber-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2"/></svg>
+        </div>
+        <div>
+            <p class="text-2xl font-bold text-slate-900">{{ pending_vouchers|default:"0" }}</p>
+            <p class="text-sm text-slate-500">Pending Vouchers</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-gradient-to-br from-rose-500 to-rose-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586"/></svg>
+        </div>
+        <div>
+            <p class="text-2xl font-bold text-slate-900">{{ pending_forms|default:"0" }}</p>
+            <p class="text-sm text-slate-500">Pending Forms</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-6">
+    <div class="card">
+        <h2 class="font-bold text-slate-900 mb-4">Recent Announcements</h2>
+        {% for ann in recent_announcements %}
+        <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 mb-1">
+            <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/></svg>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-slate-900">{{ ann.title }}</p>
+                <p class="text-xs text-slate-500">{{ ann.publish_date|date:"M d, Y" }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-sm text-slate-400 text-center py-8">No announcements yet</p>
+        {% endfor %}
+    </div>
+    <div class="card">
+        <h2 class="font-bold text-slate-900 mb-4">Recent Users</h2>
+        {% for u in recent_users %}
+        <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 mb-1">
+            <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-xs">{{ u.first_name|first }}{{ u.last_name|first }}</div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-slate-900 truncate">{{ u.get_full_name }}</p>
+                <p class="text-xs text-slate-500">{{ u.email }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-sm text-slate-400 text-center py-8">No recent users</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

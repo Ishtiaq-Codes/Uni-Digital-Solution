@@ -1,0 +1,83 @@
+{% load static %}
+{% load humanize %}
+{% load dashboard_tags %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UAF Smart Dashboard - University of Agriculture Faisalabad Management System">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>{% block title %}UAF Smart Dashboard{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-sans bg-slate-50 text-slate-700 antialiased">
+
+    <!-- Django Messages (hidden, picked up by JS) -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="django-message hidden" data-type="{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-3"></div>
+
+    {% block body %}
+    {% if user.is_authenticated and not hide_layout %}
+    <!-- ===== AUTHENTICATED LAYOUT WITH SIDEBAR ===== -->
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Sidebar Overlay (mobile) -->
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/50 z-40 lg:hidden"></div>
+
+        <!-- Sidebar -->
+        {% include 'components/sidebar.html' %}
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- Top Navbar -->
+            {% include 'components/navbar.html' %}
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+                <div class="page-content max-w-7xl mx-auto">
+
+                    <!-- Breadcrumbs -->
+                    {% block breadcrumbs %}{% endblock %}
+
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+    {% else %}
+    <!-- ===== PUBLIC LAYOUT (no sidebar) ===== -->
+    {% block public_content %}{% endblock %}
+    {% endif %}
+    {% endblock %}
+
+    <!-- Main JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

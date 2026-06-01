@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Upload Receipt - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">Upload Payment Receipt</h1><p class="page-subtitle">Voucher: {{ voucher.voucher_number }}</p></div>
+<div class="card max-w-2xl">
+    <form method="post" enctype="multipart/form-data" class="space-y-4">{% csrf_token %}
+        {% for field in form %}<div class="form-group"><label class="form-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+        <button type="submit" class="btn-primary">Upload Receipt</button>
+    </form>
+</div>
+{% endblock %}

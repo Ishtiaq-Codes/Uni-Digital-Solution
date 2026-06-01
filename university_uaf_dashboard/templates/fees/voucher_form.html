@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Generate Voucher - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">Generate Fee Voucher</h1></div>
+<div class="card max-w-2xl">
+    <form method="post" class="space-y-4">{% csrf_token %}
+        {% for field in form %}<div class="form-group"><label class="form-label">{{ field.label }}</label>{{ field }}{% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}{% if field.help_text %}<p class="text-xs text-slate-400 mt-1">{{ field.help_text }}</p>{% endif %}</div>{% endfor %}
+        <button type="submit" class="btn-primary">Generate Voucher</button>
+    </form>
+</div>
+{% endblock %}

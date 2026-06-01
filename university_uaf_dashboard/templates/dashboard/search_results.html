@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Search - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">Search Results</h1>{% if query %}<p class="page-subtitle">{{ total_results }} results for "{{ query }}"</p>{% endif %}</div>
+<form method="GET" class="mb-6"><div class="relative"><svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" name="q" value="{{ query }}" placeholder="Search..." class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500" autofocus></div></form>
+{% if query %}
+{% if results.users %}<div class="card mb-4"><h2 class="font-bold text-slate-900 mb-3">Users</h2>{% for u in results.users %}<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50"><div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-xs">{{ u.first_name|first }}{{ u.last_name|first }}</div><div><p class="text-sm font-medium text-slate-900">{{ u.get_full_name }}</p><p class="text-xs text-slate-500">{{ u.email }}</p></div></div>{% endfor %}</div>{% endif %}
+{% if results.courses %}<div class="card mb-4"><h2 class="font-bold text-slate-900 mb-3">Courses</h2>{% for c in results.courses %}<a href="{% url 'courses:detail' pk=c.pk %}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 block"><div><p class="text-sm font-medium text-slate-900">{{ c.code }} - {{ c.title }}</p></div></a>{% endfor %}</div>{% endif %}
+{% if results.departments %}<div class="card mb-4"><h2 class="font-bold text-slate-900 mb-3">Departments</h2>{% for d in results.departments %}<div class="p-2"><p class="text-sm font-medium text-slate-900">{{ d.name }}</p></div>{% endfor %}</div>{% endif %}
+{% if results.announcements %}<div class="card mb-4"><h2 class="font-bold text-slate-900 mb-3">Announcements</h2>{% for a in results.announcements %}<div class="p-2"><p class="text-sm font-medium text-slate-900">{{ a.title }}</p><p class="text-xs text-slate-500">{{ a.publish_date|date:"M d, Y" }}</p></div>{% endfor %}</div>{% endif %}
+{% if total_results == 0 %}<div class="empty-state"><p class="text-slate-400">No results found for "{{ query }}"</p></div>{% endif %}
+{% endif %}
+{% endblock %}

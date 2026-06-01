@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}{{ announcement.title }} - UAF{% endblock %}
+{% block content %}
+<div class="max-w-3xl"><div class="mb-6"><a href="{% url 'university:announcements' %}" class="text-sm text-indigo-600">&larr; Back to announcements</a></div><div class="card"><h1 class="text-2xl font-bold text-slate-900 mb-3">{{ announcement.title }}</h1><p class="text-xs text-slate-400 mb-4">Published {{ announcement.publish_date|date:"M d, Y" }}</p><div class="prose text-sm text-slate-600 leading-relaxed">{{ announcement.content|linebreaks }}</div>{% if announcement.attachment %}<div class="mt-6 p-3 bg-slate-50 rounded-lg"><a href="{{ announcement.attachment.url }}" class="text-indigo-600 text-sm font-medium">Download Attachment</a></div>{% endif %}</div></div>
+{% endblock %}

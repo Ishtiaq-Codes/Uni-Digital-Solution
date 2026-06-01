@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Courses - UAF{% endblock %}
+{% block content %}
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+    <div><h1 class="page-title">Courses</h1><p class="page-subtitle">Browse and manage courses</p></div>
+    {% if user.is_faculty or user.is_admin %}<a href="{% url 'courses:create' %}" class="btn-primary">+ New Course</a>{% endif %}
+</div>
+<div class="card mb-6">
+    <form method="GET" class="flex flex-wrap gap-3">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search courses..." class="flex-1 min-w-[200px] px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+        <select name="department" class="px-4 py-2 border border-slate-300 rounded-lg text-sm"><option value="">All Departments</option>{% for d in departments %}<option value="{{ d.pk }}" {% if dept_filter == d.pk|slugify %}selected{% endif %}>{{ d.name }}</option>{% endfor %}</select>
+        <select name="level" class="px-4 py-2 border border-slate-300 rounded-lg text-sm"><option value="">All Levels</option><option value="ug" {% if level_filter == "ug" %}selected{% endif %}>Undergraduate</option><option value="pg" {% if level_filter == "pg" %}selected{% endif %}>Postgraduate</option></select>
+        <button type="submit" class="btn-primary btn-sm">Search</button>
+    </form>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for course in courses %}
+    <a href="{% url 'courses:detail' pk=course.pk %}" class="card hover:border-indigo-200 hover:-translate-y-0.5 transition-all duration-200 block">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="badge bg-indigo-100 text-indigo-700">{{ course.code }}</span>
+            <span class="badge bg-slate-100 text-slate-600">{{ course.get_level_display }}</span>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-1">{{ course.title }}</h3>
+        <p class="text-sm text-slate-500 mb-3 line-clamp-2">{{ course.description|default:"No description provided." }}</p>
+        <div class="flex items-center gap-2 text-xs text-slate-400">
+            <span>{{ course.department.name }}</span><span>&middot;</span>
+            <span>Semester {{ course.semester }}</span><span>&middot;</span>
+            <span>{{ course.credit_hours }} CH</span>
+        </div>
+        {% if course.instructor %}<p class="text-xs text-slate-400 mt-2">Instructor: {{ course.instructor.get_full_name }}</p>{% endif %}
+    </a>
+    {% empty %}
+    <div class="col-span-3 empty-state"><p class="text-slate-400">No courses found.</p></div>
+    {% endfor %}
+</div>
+{% if courses.has_other_pages %}
+<div class="flex justify-center mt-8 gap-2">
+    {% if courses.has_previous %}<a href="?page={{ courses.previous_page_number }}" class="btn-secondary btn-sm">&larr; Previous</a>{% endif %}
+    <span class="px-4 py-2 text-sm text-slate-500">Page {{ courses.number }} of {{ courses.paginator.num_pages }}</span>
+    {% if courses.has_next %}<a href="?page={{ courses.next_page_number }}" class="btn-secondary btn-sm">Next &rarr;</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

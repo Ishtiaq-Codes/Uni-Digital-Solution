@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }} - UAF{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <div class="flex items-center gap-2 text-sm text-slate-500 mb-2"><a href="{% url 'courses:list' %}" class="hover:text-indigo-600">Courses</a><span>/</span><span>{{ course.code }}</span></div>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="page-title">{{ course.title }}</h1>
+            <p class="page-subtitle">{{ course.code }} &middot; {{ course.department.name }} &middot; Semester {{ course.semester }}</p>
+        </div>
+        <div class="flex gap-2">
+            {% if user.is_faculty or user.is_admin %}<a href="{% url 'courses:edit' pk=course.pk %}" class="btn-secondary btn-sm">Edit</a><a href="{% url 'courses:upload_material' pk=course.pk %}" class="btn-primary btn-sm">Upload Material</a><a href="{% url 'courses:create_assignment' pk=course.pk %}" class="btn-primary btn-sm">+ Assignment</a>{% endif %}
+            {% if user.is_student and not is_enrolled %}<form method="post" action="{% url 'courses:enroll' pk=course.pk %}">{% csrf_token %}<button class="btn-primary btn-sm">Enroll</button></form>{% endif %}
+        </div>
+    </div>
+</div>
+<div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <div class="card"><h2 class="font-bold text-slate-900 mb-2">Description</h2><p class="text-sm text-slate-600 leading-relaxed">{{ course.description|default:"No description." }}</p></div>
+        <div class="card">
+            <h2 class="font-bold text-slate-900 mb-4">Course Materials</h2>
+            {% for m in materials %}
+            <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 mb-1">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
+                <div class="flex-1"><p class="text-sm font-medium text-slate-900">{{ m.title }}</p><p class="text-xs text-slate-500">{{ m.get_material_type_display }} &middot; {{ m.download_count }} downloads</p></div>
+                <a href="{% url 'courses:download_material' pk=m.pk %}" class="btn-secondary btn-sm">Download</a>
+            </div>
+            {% empty %}<p class="text-sm text-slate-400 text-center py-6">No materials uploaded yet.</p>{% endfor %}
+        </div>
+        <div class="card">
+            <h2 class="font-bold text-slate-900 mb-4">Assignments</h2>
+            {% for a in assignments %}
+            <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 mb-1">
+                <div class="w-8 h-8 rounded-lg {% if a.is_overdue %}bg-rose-100{% else %}bg-amber-100{% endif %} flex items-center justify-center">
+                    <svg class="w-4 h-4 {% if a.is_overdue %}text-rose-600{% else %}text-amber-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                </div>
+                <div class="flex-1"><p class="text-sm font-medium text-slate-900">{{ a.title }}</p><p class="text-xs {% if a.is_overdue %}text-rose-500{% else %}text-slate-500{% endif %}">Due: {{ a.due_date|date:"M d, Y h:i A" }} {% if a.is_overdue %}&middot; OVERDUE{% endif %}</p></div>
+            </div>
+            {% empty %}<p class="text-sm text-slate-400 text-center py-6">No assignments yet.</p>{% endfor %}
+        </div>
+    </div>
+    <div class="space-y-6">
+        <div class="card">
+            <h3 class="font-bold text-slate-900 mb-3">Course Info</h3>
+            <dl class="space-y-2 text-sm">
+                <div class="flex justify-between"><dt class="text-slate-500">Code</dt><dd class="font-medium text-slate-900">{{ course.code }}</dd></div>
+                <div class="flex justify-between"><dt class="text-slate-500">Level</dt><dd class="font-medium text-slate-900">{{ course.get_level_display }}</dd></div>
+                <div class="flex justify-between"><dt class="text-slate-500">Semester</dt><dd class="font-medium text-slate-900">{{ course.semester }}</dd></div>
+                <div class="flex justify-between"><dt class="text-slate-500">Credit Hours</dt><dd class="font-medium text-slate-900">{{ course.credit_hours }}</dd></div>
+                <div class="flex justify-between"><dt class="text-slate-500">Department</dt><dd class="font-medium text-slate-900">{{ course.department.name }}</dd></div>
+                {% if course.instructor %}<div class="flex justify-between"><dt class="text-slate-500">Instructor</dt><dd class="font-medium text-slate-900">{{ course.instructor.get_full_name }}</dd></div>{% endif %}
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %}

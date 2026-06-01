@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Voucher {{ voucher.voucher_number }} - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">Voucher {{ voucher.voucher_number }}</h1></div>
+<div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <div class="card">
+            <h2 class="font-bold text-slate-900 mb-4">Voucher Details</h2>
+            <dl class="grid grid-cols-2 gap-4 text-sm">
+                <div><dt class="text-slate-500">Student</dt><dd class="font-medium text-slate-900 mt-0.5">{{ voucher.student.get_full_name }}</dd></div>
+                <div><dt class="text-slate-500">Amount</dt><dd class="font-medium text-slate-900 mt-0.5 text-lg">Rs. {{ voucher.amount }}</dd></div>
+                <div><dt class="text-slate-500">Semester</dt><dd class="font-medium text-slate-900 mt-0.5">{{ voucher.semester }}</dd></div>
+                <div><dt class="text-slate-500">Due Date</dt><dd class="font-medium text-slate-900 mt-0.5">{{ voucher.due_date|date:"M d, Y" }}</dd></div>
+                <div><dt class="text-slate-500">Status</dt><dd class="mt-0.5"><span class="badge badge-{{ voucher.status }}">{{ voucher.get_status_display }}</span></dd></div>
+                <div><dt class="text-slate-500">Created</dt><dd class="font-medium text-slate-900 mt-0.5">{{ voucher.created_at|date:"M d, Y" }}</dd></div>
+            </dl>
+            {% if voucher.remarks %}<div class="mt-4 p-3 bg-slate-50 rounded-lg"><p class="text-sm text-slate-600"><strong>Remarks:</strong> {{ voucher.remarks }}</p></div>{% endif %}
+        </div>
+        <div class="card">
+            <h2 class="font-bold text-slate-900 mb-4">Payment History</h2>
+            {% for p in payments %}
+            <div class="p-3 rounded-lg bg-slate-50 mb-2">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="badge badge-{{ p.status }}">{{ p.get_status_display }}</span>
+                    <span class="text-xs text-slate-400">{{ p.submitted_at|date:"M d, Y h:i A" }}</span>
+                </div>
+                {% if p.transaction_id %}<p class="text-xs text-slate-500">Transaction: {{ p.transaction_id }}</p>{% endif %}
+                {% if p.admin_remarks %}<p class="text-xs text-slate-500 mt-1">Admin: {{ p.admin_remarks }}</p>{% endif %}
+                {% if user.is_admin and p.status == 'submitted' %}
+                <form method="post" action="{% url 'fees:verify_payment' pk=p.pk %}" class="mt-2 flex gap-2">
+                    {% csrf_token %}
+                    <select name="status" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs"><option value="verified">Approve</option><option value="rejected">Reject</option></select>
+                    <input type="text" name="admin_remarks" placeholder="Remarks..." class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs flex-1">
+                    <button type="submit" class="btn-primary btn-sm text-xs">Submit</button>
+                </form>
+                {% endif %}
+            </div>
+            {% empty %}<p class="text-sm text-slate-400 text-center py-6">No payments submitted yet.</p>{% endfor %}
+        </div>
+    </div>
+    <div>
+        {% if user.is_student and voucher.status == 'pending' %}
+        <div class="card">
+            <h3 class="font-bold text-slate-900 mb-3">Upload Payment Receipt</h3>
+            <form method="post" action="{% url 'fees:upload_receipt' pk=voucher.pk %}" enctype="multipart/form-data" class="space-y-3">{% csrf_token %}
+                {% for field in payment_form %}<div class="form-group"><label class="form-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+                <button type="submit" class="btn-primary w-full">Upload Receipt</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

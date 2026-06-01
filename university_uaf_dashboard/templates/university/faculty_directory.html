@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Faculty Directory - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">Faculty Directory</h1></div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{% for f in faculty %}<div class="card text-center"><div class="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3 text-emerald-600 font-bold text-lg">{{ f.first_name|first }}{{ f.last_name|first }}</div><h3 class="font-bold text-slate-900 text-sm">{{ f.get_full_name }}</h3><p class="text-xs text-slate-500">{{ f.profile.designation|default:"Faculty" }}</p><p class="text-xs text-slate-400 mt-1">{{ f.email }}</p></div>{% empty %}<div class="col-span-3 text-center py-12 text-slate-400">No faculty listed.</div>{% endfor %}</div>
+{% endblock %}

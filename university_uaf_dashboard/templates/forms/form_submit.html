@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Submit {{ template.title }} - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">{{ template.title }}</h1><p class="page-subtitle">{{ template.get_form_type_display }} Form</p></div>
+<div class="card max-w-2xl">
+    <p class="text-sm text-slate-600 mb-6">{{ template.description }}</p>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">{% csrf_token %}
+        {% for field_def in template.fields_schema %}
+        <div class="form-group"><label class="form-label">{{ field_def.label|default:field_def.name }}</label><input type="{{ field_def.type|default:'text' }}" name="field_{{ field_def.name }}" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500" {% if field_def.required %}required{% endif %}></div>
+        {% endfor %}
+        {% for field in form %}<div class="form-group"><label class="form-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+        <button type="submit" class="btn-primary">Submit Form</button>
+    </form>
+</div>
+{% endblock %}

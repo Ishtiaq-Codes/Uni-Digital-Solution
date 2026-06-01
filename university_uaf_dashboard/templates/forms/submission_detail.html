@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Submission Detail - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">{{ submission.template.title }}</h1><p class="page-subtitle">Submitted by {{ submission.student.get_full_name }} on {{ submission.submitted_at|date:"M d, Y h:i A" }}</p></div>
+<div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 card">
+        <h2 class="font-bold text-slate-900 mb-4">Submission Data</h2>
+        {% for key, value in submission.form_data.items %}<div class="mb-3"><p class="text-xs text-slate-500">{{ key }}</p><p class="text-sm font-medium text-slate-900">{{ value }}</p></div>{% endfor %}
+        {% if submission.attachment %}<div class="mt-4 p-3 bg-slate-50 rounded-lg"><p class="text-sm"><strong>Attachment:</strong> <a href="{{ submission.attachment.url }}" class="text-indigo-600">Download</a></p></div>{% endif %}
+        {% if submission.remarks %}<div class="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200"><p class="text-sm text-amber-800"><strong>Remarks:</strong> {{ submission.remarks }}</p></div>{% endif %}
+    </div>
+    <div class="space-y-6">
+        <div class="card"><h3 class="font-bold text-slate-900 mb-3">Status</h3><span class="badge badge-{{ submission.status }}">{{ submission.get_status_display }}</span>{% if submission.reviewed_by %}<p class="text-xs text-slate-500 mt-2">Reviewed by {{ submission.reviewed_by.get_full_name }}</p>{% endif %}</div>
+        {% if review_form %}
+        <div class="card">
+            <h3 class="font-bold text-slate-900 mb-3">Review</h3>
+            <form method="post" action="{% url 'form_manager:review' pk=submission.pk %}" class="space-y-3">{% csrf_token %}
+                {% for field in review_form %}<div class="form-group"><label class="form-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+                <button type="submit" class="btn-primary w-full">Submit Review</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

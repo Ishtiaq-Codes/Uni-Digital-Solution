@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Features - UAF</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="{% static 'css/output.css' %}"></head>
+<body class="font-sans bg-white text-slate-700 antialiased">
+<nav class="bg-white border-b border-slate-100 sticky top-0 z-50"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16"><a href="{% url 'dashboard:landing' %}" class="flex items-center gap-3"><div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13"/></svg></div><span class="font-bold text-lg text-slate-900">UAF Dashboard</span></a><a href="{% url 'accounts:login' %}" class="btn-primary btn-sm">Sign In</a></div></nav>
+<div class="max-w-6xl mx-auto px-4 py-16">
+    <div class="text-center mb-16"><h1 class="text-4xl font-extrabold text-slate-900 mb-4">Platform Features</h1><p class="text-lg text-slate-600">Everything you need for modern university management.</p></div>
+    <div class="grid md:grid-cols-2 gap-8">
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">📚 Course Management</h3><p class="text-sm text-slate-500">Create courses, upload materials (PDF, PPT, DOCX), create assignments with deadlines, and manage enrollments.</p></div>
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">💳 Fee Voucher System</h3><p class="text-sm text-slate-500">Generate fee vouchers, upload payment receipts, admin verification with approve/reject workflow.</p></div>
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">📄 UG/PG Form Management</h3><p class="text-sm text-slate-500">Submit admission, scholarship, exam forms (UG) and GS-10 forms (PG) with multi-level approval tracking.</p></div>
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">📊 QEC Feedback</h3><p class="text-sm text-slate-500">Anonymous course & faculty ratings with analytics dashboard and Chart.js visualizations.</p></div>
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">🔔 Smart Notifications</h3><p class="text-sm text-slate-500">Real-time in-app notifications for announcements, fee deadlines, form status changes, and more.</p></div>
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">📈 Reports & Analytics</h3><p class="text-sm text-slate-500">Data-driven dashboards with exportable CSV reports for students, fees, and QEC feedback.</p></div>
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">🔐 Role-Based Access</h3><p class="text-sm text-slate-500">7 distinct user roles with separate dashboards, permissions, and secure access control.</p></div>
+        <div class="p-6 border border-slate-200 rounded-xl"><h3 class="font-bold text-slate-900 mb-2">🔍 Global Search</h3><p class="text-sm text-slate-500">Search across students, faculty, courses, departments, and announcements from one search bar.</p></div>
+    </div>
+</div>
+</body></html>

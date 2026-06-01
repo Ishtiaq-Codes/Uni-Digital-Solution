@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}QEC Feedback - UAF{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <div><h1 class="page-title">QEC Feedback</h1></div>
+    {% if user.is_student %}<a href="{% url 'qec:submit' %}" class="btn-primary">+ Submit Feedback</a>{% endif %}
+</div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Course</th><th>Teaching</th><th>Content</th><th>Assessment</th><th>Overall</th><th>Date</th></tr></thead>
+        <tbody>{% for f in feedback_list %}<tr><td class="font-medium">{{ f.course }}</td><td>{{ f.teaching_rating }}/5</td><td>{{ f.content_rating }}/5</td><td>{{ f.assessment_rating }}/5</td><td><span class="font-bold text-indigo-600">{{ f.overall_rating }}/5</span></td><td>{{ f.submitted_at|date:"M d, Y" }}</td></tr>{% empty %}<tr><td colspan="6" class="text-center py-8 text-slate-400">No feedback submitted yet.</td></tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% endblock %}

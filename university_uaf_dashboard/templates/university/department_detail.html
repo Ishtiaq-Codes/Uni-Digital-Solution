@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}{{ department.name }} - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">{{ department.name }}</h1><p class="page-subtitle">{{ department.code }}</p></div>
+<div class="card mb-6"><p class="text-sm text-slate-600">{{ department.description|default:"No description available." }}</p></div>
+<div class="grid lg:grid-cols-2 gap-6">
+    <div class="card"><h2 class="font-bold text-slate-900 mb-3">Courses</h2>{% for c in courses %}<div class="p-2 hover:bg-slate-50 rounded-lg"><p class="text-sm font-medium">{{ c.code }} - {{ c.title }}</p></div>{% empty %}<p class="text-sm text-slate-400">No courses.</p>{% endfor %}</div>
+    <div class="card"><h2 class="font-bold text-slate-900 mb-3">Faculty</h2>{% for p in faculty %}<div class="p-2 hover:bg-slate-50 rounded-lg"><p class="text-sm font-medium">{{ p.user.get_full_name }}</p><p class="text-xs text-slate-500">{{ p.designation|default:"Faculty" }}</p></div>{% empty %}<p class="text-sm text-slate-400">No faculty listed.</p>{% endfor %}</div>
+</div>
+{% endblock %}

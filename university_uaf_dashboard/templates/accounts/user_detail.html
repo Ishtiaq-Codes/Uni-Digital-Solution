@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}User Profile - {{ viewed_user.get_full_name }}{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="mb-6 flex items-center gap-4">
+        <a href="{% url 'accounts:user_list' %}" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        </a>
+        <h1 class="text-2xl font-bold text-slate-900">User Details</h1>
+    </div>
+
+    {% if messages %}
+    <div class="mb-6">
+        {% for message in messages %}
+        <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-emerald-50 text-emerald-700 border border-emerald-200{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 sm:p-8">
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <div class="sm:flex sm:space-x-5 items-center">
+                    <div class="flex-shrink-0">
+                        <div class="mx-auto h-20 w-20 rounded-full bg-indigo-100 flex items-center justify-center text-3xl font-bold text-indigo-700">
+                            {{ viewed_user.first_name|first }}{{ viewed_user.last_name|first }}
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
+                        <p class="text-xl font-bold text-slate-900 sm:text-2xl">{{ viewed_user.get_full_name }}</p>
+                        <p class="text-sm font-medium text-slate-600">{{ viewed_user.email }}</p>
+                    </div>
+                </div>
+                <div class="mt-5 flex justify-center sm:mt-0 flex-col gap-2">
+                    <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        {{ viewed_user.get_role_display }}
+                    </span>
+                    {% if viewed_user.is_active %}
+                    <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">Active</span>
+                    {% else %}
+                    <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium bg-rose-100 text-rose-800">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-8 border-t border-slate-200 pt-8">
+                <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                    <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-slate-500">Registration Number</dt>
+                        <dd class="mt-1 text-sm text-slate-900">{{ viewed_user.registration_number|default:"N/A" }}</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-slate-500">Department</dt>
+                        <dd class="mt-1 text-sm text-slate-900">{{ viewed_user.department.name|default:"N/A" }}</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-slate-500">Date Joined</dt>
+                        <dd class="mt-1 text-sm text-slate-900">{{ viewed_user.date_joined|date:"F d, Y H:i" }}</dd>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <dt class="text-sm font-medium text-slate-500">Last Login</dt>
+                        <dd class="mt-1 text-sm text-slate-900">{{ viewed_user.last_login|date:"F d, Y H:i"|default:"Never" }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        
+        <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-wrap gap-3">
+            {% if request.user.role == 'super_admin' or request.user.role == 'university_admin' and viewed_user.role != 'super_admin' %}
+            <form method="post" action="{% url 'accounts:toggle_user_active' viewed_user.pk %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="inline-flex items-center px-4 py-2 border rounded-md shadow-sm text-sm font-medium {% if viewed_user.is_active %}border-rose-300 text-rose-700 bg-white hover:bg-rose-50{% else %}border-emerald-300 text-emerald-700 bg-white hover:bg-emerald-50{% endif %}">
+                    {% if viewed_user.is_active %}Deactivate Account{% else %}Activate Account{% endif %}
+                </button>
+            </form>
+            <a href="{% url 'accounts:admin_reset_password' viewed_user.pk %}" class="inline-flex items-center px-4 py-2 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50">
+                Reset Password
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

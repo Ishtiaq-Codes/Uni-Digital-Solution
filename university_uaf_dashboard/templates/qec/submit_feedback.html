@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Submit Feedback - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">Submit Course Feedback</h1><p class="page-subtitle">Your feedback helps improve teaching quality</p></div>
+<div class="card max-w-2xl">
+    <form method="post" class="space-y-6">{% csrf_token %}
+        <div class="form-group"><label class="form-label">Course</label>{{ form.course }}{% if form.course.errors %}<p class="form-error">{{ form.course.errors.0 }}</p>{% endif %}</div>
+        {% for field in form %}{% if 'rating' in field.name %}
+        <div class="form-group"><label class="form-label">{{ field.label }}</label><div class="flex gap-4">{% for choice in field.field.choices %}<label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="{{ field.name }}" value="{{ choice.0 }}" class="text-indigo-600" {% if field.value|stringformat:"s" == choice.0|stringformat:"s" %}checked{% endif %}><span class="text-sm">{{ choice.1 }}</span></label>{% endfor %}</div></div>
+        {% endif %}{% endfor %}
+        <div class="form-group"><label class="form-label">Comments</label>{{ form.comments }}</div>
+        <div class="form-group"><label class="flex items-center gap-2 cursor-pointer">{{ form.is_anonymous }}<span class="text-sm text-slate-600">Submit anonymously</span></label></div>
+        <button type="submit" class="btn-primary">Submit Feedback</button>
+    </form>
+</div>
+{% endblock %}

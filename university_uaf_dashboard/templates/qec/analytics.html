@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}QEC Analytics - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">QEC Analytics</h1><p class="page-subtitle">Course quality and feedback insights</p></div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="stat-card"><div class="stat-icon bg-gradient-to-br from-indigo-500 to-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z"/></svg></div><div><p class="text-2xl font-bold text-slate-900">{{ total_feedback }}</p><p class="text-sm text-slate-500">Total Responses</p></div></div>
+    <div class="stat-card"><div class="stat-icon bg-gradient-to-br from-amber-500 to-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div><div><p class="text-2xl font-bold text-slate-900">{{ avg_ratings.avg_overall|floatformat:1|default:"0" }}</p><p class="text-sm text-slate-500">Avg Overall Rating</p></div></div>
+    <div class="stat-card"><div class="stat-icon bg-gradient-to-br from-emerald-500 to-emerald-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div><div><p class="text-2xl font-bold text-slate-900">{{ avg_ratings.avg_teaching|floatformat:1|default:"0" }}</p><p class="text-sm text-slate-500">Avg Teaching Rating</p></div></div>
+</div>
+<div class="grid lg:grid-cols-2 gap-6">
+    <div class="card"><h2 class="font-bold text-slate-900 mb-4">Department Ratings</h2><canvas id="deptChart" height="250"></canvas></div>
+    <div class="card"><h2 class="font-bold text-slate-900 mb-4">Top Courses</h2><canvas id="courseChart" height="250"></canvas></div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const deptData = {{ dept_stats|safe }};
+const courseData = {{ course_stats|safe }};
+if (deptData.length) {
+    new Chart(document.getElementById('deptChart'), {type:'bar',data:{labels:deptData.map(d=>d.course__department__name||'Unknown'),datasets:[{label:'Avg Rating',data:deptData.map(d=>d.avg_rating),backgroundColor:'rgba(99,102,241,0.7)',borderRadius:6}]},options:{responsive:true,scales:{y:{beginAtZero:true,max:5}},plugins:{legend:{display:false}}}});
+}
+if (courseData.length) {
+    new Chart(document.getElementById('courseChart'), {type:'bar',data:{labels:courseData.map(d=>d.course__code),datasets:[{label:'Avg Rating',data:courseData.map(d=>d.avg_rating),backgroundColor:'rgba(16,185,129,0.7)',borderRadius:6}]},options:{responsive:true,scales:{y:{beginAtZero:true,max:5}},plugins:{legend:{display:false}}}});
+}
+</script>
+{% endblock %}

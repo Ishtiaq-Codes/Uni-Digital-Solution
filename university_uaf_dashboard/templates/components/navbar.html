@@ -1,0 +1,94 @@
+{% load static %}
+{% load dashboard_tags %}
+<!-- Top Navbar -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="flex items-center justify-between px-4 md:px-6 py-3">
+
+        <!-- Left: Mobile menu + Search -->
+        <div class="flex items-center gap-3">
+            <!-- Mobile sidebar toggle -->
+            <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+
+            <!-- Search bar -->
+            <form action="{% url 'dashboard:search' %}" method="GET" class="hidden md:flex items-center">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" name="q" placeholder="Search courses, students, faculty..." value="{{ request.GET.q }}"
+                           class="w-72 lg:w-96 pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+            </form>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="flex items-center gap-2">
+            <!-- Mobile search -->
+            <a href="{% url 'dashboard:search' %}" class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </a>
+
+            <!-- Notifications -->
+            <div class="relative">
+                <button id="notification-btn" class="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    {% if unread_notification_count > 0 %}
+                    <span id="notification-badge" class="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-xs font-bold rounded-full w-4.5 h-4.5 flex items-center justify-center text-[10px] min-w-[18px] px-1">{{ unread_notification_count }}</span>
+                    {% else %}
+                    <span id="notification-badge" class="hidden absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-xs font-bold rounded-full min-w-[18px] px-1 flex items-center justify-center text-[10px]"></span>
+                    {% endif %}
+                </button>
+
+                <!-- Notification Dropdown -->
+                <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden z-50">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
+                        <h3 class="font-semibold text-sm text-slate-900">Notifications</h3>
+                        <a href="{% url 'notifications:mark_all_read' %}" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">Mark all read</a>
+                    </div>
+                    <div id="notification-items" class="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                        <div class="px-4 py-8 text-center text-slate-400 text-sm">Loading...</div>
+                    </div>
+                    <a href="{% url 'notifications:list' %}" class="block text-center py-3 text-sm font-medium text-indigo-600 hover:bg-slate-50 border-t border-slate-100">
+                        View all notifications
+                    </a>
+                </div>
+            </div>
+
+            <!-- User Menu -->
+            <div class="relative">
+                <button id="user-menu-btn" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-xs">
+                        {{ user.first_name|first }}{{ user.last_name|first }}
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <p class="text-sm font-medium text-slate-700">{{ user.get_full_name|truncatechars:20 }}</p>
+                    </div>
+                    <svg class="w-4 h-4 text-slate-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+
+                <!-- User Dropdown -->
+                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
+                    <div class="px-4 py-2 border-b border-slate-100 mb-1">
+                        <p class="text-sm font-medium text-slate-900">{{ user.get_full_name }}</p>
+                        <p class="text-xs text-slate-500">{{ user.email }}</p>
+                        <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full {{ user.role|get_role_color }}">{{ user.role_display }}</span>
+                    </div>
+                    <a href="{% url 'accounts:profile' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Profile Settings
+                    </a>
+                    <a href="{% url 'accounts:change_password' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        Change Password
+                    </a>
+                    <div class="border-t border-slate-100 mt-1 pt-1">
+                        <a href="{% url 'accounts:logout' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

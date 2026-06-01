@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load dashboard_tags %}
+{% block title %}My Submissions - UAF{% endblock %}
+{% block content %}
+<div class="mb-6"><h1 class="page-title">My Submissions</h1></div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Form</th><th>Type</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+        <tbody>{% for s in submissions %}
+        <tr><td class="font-medium">{{ s.template.title }}</td><td><span class="badge {% if s.template.form_type == 'ug' %}bg-indigo-100 text-indigo-700{% else %}bg-cyan-100 text-cyan-700{% endif %}">{{ s.template.get_form_type_display }}</span></td><td><span class="badge badge-{{ s.status }}">{{ s.get_status_display }}</span></td><td>{{ s.submitted_at|date:"M d, Y" }}</td><td><a href="{% url 'form_manager:submission_detail' pk=s.pk %}" class="text-indigo-600 text-sm font-medium">View</a></td></tr>
+        {% empty %}<tr><td colspan="5" class="text-center py-8 text-slate-400">No submissions yet.</td></tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% endblock %}

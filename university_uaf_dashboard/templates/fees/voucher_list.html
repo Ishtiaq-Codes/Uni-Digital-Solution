@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load dashboard_tags %}
+{% block title %}Fee Vouchers - UAF{% endblock %}
+{% block content %}
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+    <div><h1 class="page-title">Fee Vouchers</h1><p class="page-subtitle">Manage fee vouchers and payments</p></div>
+    {% if user.is_admin %}<a href="{% url 'fees:create' %}" class="btn-primary">+ Generate Voucher</a>{% endif %}
+</div>
+<div class="card mb-6">
+    <form method="GET" class="flex flex-wrap gap-3">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by voucher or student..." class="flex-1 min-w-[200px] px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+        <select name="status" class="px-4 py-2 border border-slate-300 rounded-lg text-sm"><option value="">All Status</option><option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option><option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid</option><option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option><option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option></select>
+        <button type="submit" class="btn-primary btn-sm">Filter</button>
+    </form>
+</div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Voucher #</th><th>Student</th><th>Amount</th><th>Semester</th><th>Status</th><th>Due Date</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for v in vouchers %}
+            <tr>
+                <td class="font-medium">{{ v.voucher_number }}</td>
+                <td>{{ v.student.get_full_name }}</td>
+                <td>Rs. {{ v.amount }}</td>
+                <td>{{ v.semester }}</td>
+                <td><span class="badge badge-{{ v.status }}">{{ v.get_status_display }}</span></td>
+                <td class="{% if v.is_overdue %}text-rose-600 font-medium{% endif %}">{{ v.due_date|date:"M d, Y" }}{% if v.is_overdue %} (Overdue){% endif %}</td>
+                <td><a href="{% url 'fees:detail' pk=v.pk %}" class="text-indigo-600 text-sm font-medium hover:text-indigo-700">View</a></td>
+            </tr>
+            {% empty %}<tr><td colspan="7" class="text-center py-8 text-slate-400">No vouchers found.</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

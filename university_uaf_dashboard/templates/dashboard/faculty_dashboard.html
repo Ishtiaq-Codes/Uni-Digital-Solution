@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Faculty Dashboard - UAF{% endblock %}
+{% block content %}
+<div class="mb-6">
+    <h1 class="page-title">Faculty Dashboard</h1>
+    <p class="page-subtitle">Welcome, {{ user.get_full_name }}. Manage your courses and assignments.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+    <div class="stat-card">
+        <div class="stat-icon bg-gradient-to-br from-indigo-500 to-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13"/></svg></div>
+        <div><p class="text-2xl font-bold text-slate-900">{{ total_courses|default:"0" }}</p><p class="text-sm text-slate-500">My Courses</p></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-gradient-to-br from-emerald-500 to-emerald-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg></div>
+        <div><p class="text-2xl font-bold text-slate-900">{{ pending_assignments|default:"0" }}</p><p class="text-sm text-slate-500">Active Assignments</p></div>
+    </div>
+</div>
+<div class="card">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="font-bold text-slate-900">My Courses</h2>
+        <a href="{% url 'courses:create' %}" class="btn-primary btn-sm">+ New Course</a>
+    </div>
+    {% for course in my_courses %}
+    <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 mb-1">
+        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center"><svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13"/></svg></div>
+        <div class="flex-1"><p class="text-sm font-medium text-slate-900">{{ course.title }}</p><p class="text-xs text-slate-500">{{ course.code }}</p></div>
+        <a href="{% url 'courses:detail' pk=course.pk %}" class="text-xs text-indigo-600 font-medium">Manage</a>
+    </div>
+    {% empty %}
+    <p class="text-sm text-slate-400 text-center py-8">No courses yet. <a href="{% url 'courses:create' %}" class="text-indigo-600">Create one</a></p>
+    {% endfor %}
+</div>
+{% endblock %}
