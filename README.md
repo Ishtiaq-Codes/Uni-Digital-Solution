@@ -59,7 +59,7 @@ text
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/digital-uni-solutions.git
+git clone https://github.com/Ishtiaq-Codes/digital-uni-solutions.git
 cd digital-uni-solutions
 2. Create Virtual Environment
 bash
